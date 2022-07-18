@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+
 import 'package:my_todo/routes/route_helper.dart';
 import 'package:my_todo/utils/size_config.dart';
 
@@ -14,6 +15,20 @@ class MainScreen extends StatelessWidget {
     SizeConfig().init(context);
     return Scaffold(
       appBar: AppBar(
+        leading: Padding(
+          padding: EdgeInsets.only(
+              left: getProportionateScreenWidth(23),
+              top: getProportionateScreenHeight(5)),
+          child: IconButton(
+            onPressed: () {}, // TODO add some functionality,
+
+            icon: Icon(
+              Icons.menu,
+              color: Colors.white,
+              size: getProportionateScreenHeight(30),
+            ),
+          ),
+        ),
         title: const Text('Notty'),
         actions: [
           Padding(
@@ -31,6 +46,7 @@ class MainScreen extends StatelessWidget {
           )
         ],
       ),
+     
       body: const MainScreenBody(),
     );
   }

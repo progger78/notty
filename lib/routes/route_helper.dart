@@ -1,6 +1,10 @@
 import 'package:get/get.dart';
 import 'package:my_todo/screens/add_note_screen/add_note_screen.dart';
+
 import 'package:my_todo/screens/main_screen/main_screen.dart';
+import 'package:my_todo/screens/sigh_up_screen/sigh_up_screen.dart';
+
+import '../screens/sign_in_screen/sign_in_screen.dart';
 
 class RouteHelper {
   static const String initialScreen = '/';
@@ -45,18 +49,18 @@ class RouteHelper {
         page: () {
           return const AddNoteScreen();
         }),
-    // GetPage(
-    //     name: forgotPasswordScreen,
-    //     transition: Transition.fadeIn,
-    //     page: () {
-    //       return const ForgotPasswordScreen();
-    //     }),
-    // GetPage(
-    //     name: loginSuccessfulScreen,
-    //     transition: Transition.fadeIn,
-    //     page: () {
-    //       return const LoginSuccessful();
-    //     }),
+    GetPage(
+        name: signInScreen,
+        transition: Transition.fadeIn,
+        page: () {
+          return const SignIn();
+        }),
+    GetPage(
+        name: signUpScreen,
+        transition: Transition.fadeIn,
+        page: () {
+          return const SignUpScreen();
+        }),
     // GetPage(
     //     name: signUpScreen,
     //     transition: Transition.fadeIn,

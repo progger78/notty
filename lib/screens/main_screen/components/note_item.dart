@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
+import '../../../models/auth.dart';
 import '../../../provider/notes.dart';
 import '../../../utils/utils.dart';
 import '../../../widgets/widgets.dart';
@@ -11,13 +13,12 @@ import 'custom_dismissible.dart';
 class NoteItem extends StatelessWidget {
   const NoteItem({
     Key? key,
-    required this.note,
   }) : super(key: key);
-
-  final Note note;
 
   @override
   Widget build(BuildContext context) {
+    final note = Provider.of<Note>(context);
+    final auth = Provider.of<Auth>(context, listen: false);
     return CustomDismissible(
       note: note,
       child: Container(
@@ -56,13 +57,26 @@ class NoteItem extends StatelessWidget {
               ],
             ),
             const Spacer(),
-            SvgPicture.asset(
-              'assets/icons/flame-svgrepo-com.svg',
-              width: 30,
-              color: note.isHighPrior
-                  ? AppColors.kOrangeColor
-                  : AppColors.kLightTextColor,
+            Consumer<Note>(
+              builder: (context, value, child) => GestureDetector(
+                onTap: () {
+                  value.markImportant(auth.token!);
+                },
+                child: SvgPicture.asset(
+                  'assets/icons/flame-svgrepo-com.svg',
+                  width: 30,
+                  color: value.isHighPrior
+                      ? AppColors.kOrangeColor
+                      : AppColors.kLightTextColor,
+                ),
+              ),
             ),
+            // IconButton(
+            //     onPressed: () {
+            //       note.markImportant();
+            //     },
+            //     icon: Icon(
+            //         note.isHighPrior ? Icons.favorite : Icons.favorite_border)),
             SizedBox(width: getProportionateScreenWidth(10)),
             GestureDetector(
               onTap: () {},

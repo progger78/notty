@@ -14,7 +14,7 @@ import 'date_container.dart';
 import 'time_container.dart';
 
 class AddNoteBody extends StatefulWidget {
-  AddNoteBody({
+  const AddNoteBody({
     Key? key,
   }) : super(key: key);
 
@@ -26,79 +26,102 @@ class _AddNoteBodyState extends State<AddNoteBody> {
   final TextEditingController titleController = TextEditingController();
   final TextEditingController descriptionContoreller = TextEditingController();
   var isImportant = false;
+  var isLoading = false;
   @override
   Widget build(BuildContext context) {
     final note = Provider.of<Notes>(context);
 
-    return Padding(
-      padding:
-          EdgeInsets.symmetric(horizontal: getProportionateScreenWidth(20)),
-      child: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            AppBigText(
-              text: 'Add New \nNote',
-              color: Colors.white,
-              size: getProportionateScreenHeight(36),
-              fontWeight: FontWeight.bold,
-            ),
-            SizedBox(height: getProportionateScreenHeight(10)),
-            CustomTextField(
-              label: 'Note Title',
-              controller: titleController,
-            ),
-            SizedBox(height: getProportionateScreenHeight(10)),
-            SizedBox(height: getProportionateScreenHeight(20)),
-            const PickTimeAndDate(),
-            SizedBox(height: getProportionateScreenHeight(10)),
-            CustomTextField(
-              label: 'Description',
-              controller: descriptionContoreller,
-            ),
-            SizedBox(height: getProportionateScreenHeight(20)),
-            GestureDetector(
-              child: Row(
+    return isLoading
+        ? const Center(
+            child: CircularProgressIndicator(),
+          )
+        : Padding(
+            padding: EdgeInsets.symmetric(
+                horizontal: getProportionateScreenWidth(20)),
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SvgPicture.asset(
-                    'assets/icons/flame-svgrepo-com.svg',
-                    width: 30,
-                    color: isImportant
-                        ? AppColors.kOrangeColor
-                        : AppColors.kLightTextColor,
-                  ),
-                  SizedBox(width: getProportionateScreenWidth(5)),
-                  AppSmallText(
-                    text: 'Important Note',
+                  AppBigText(
+                    text: 'Add New \nNote',
                     color: Colors.white,
-                    size: getProportionateScreenHeight(18),
+                    size: getProportionateScreenHeight(36),
+                    fontWeight: FontWeight.bold,
                   ),
+                  SizedBox(height: getProportionateScreenHeight(10)),
+                  CustomTextField(
+                    label: 'Note Title',
+                    controller: titleController,
+                  ),
+                  SizedBox(height: getProportionateScreenHeight(10)),
+                  SizedBox(height: getProportionateScreenHeight(20)),
+                  const PickTimeAndDate(),
+                  SizedBox(height: getProportionateScreenHeight(10)),
+                  CustomTextField(
+                    label: 'Description',
+                    controller: descriptionContoreller,
+                  ),
+                  SizedBox(height: getProportionateScreenHeight(20)),
+                  GestureDetector(
+                    child: Row(
+                      children: [
+                        SvgPicture.asset(
+                          'assets/icons/flame-svgrepo-com.svg',
+                          width: 30,
+                          color: isImportant
+                              ? AppColors.kOrangeColor
+                              : AppColors.kLightTextColor,
+                        ),
+                        SizedBox(width: getProportionateScreenWidth(5)),
+                        AppSmallText(
+                          text: 'Important Note',
+                          color: Colors.white,
+                          size: getProportionateScreenHeight(18),
+                        ),
+                      ],
+                    ),
+                    onTap: () {
+                      setState(() {
+                        isImportant = !isImportant;
+                      });
+                    },
+                  ),
+                  SizedBox(height: getProportionateScreenHeight(35)),
+                  DefaultButton(
+                      text: 'Add Note',
+                      press: () async {
+                        if (titleController.text.isEmpty &&
+                            descriptionContoreller.text.isEmpty) {
+                          return;
+                        }
+                        try {
+                          setState(() {
+                            isLoading = true;
+                          });
+                          await note.addNote(
+                              isImportant,
+                              titleController.text,
+                              descriptionContoreller.text,
+                              DateTime.now().toIso8601String());
+                        } catch (e) {
+                          await showDialog<void>(
+                              context: context,
+                              builder: (ctx) {
+                                return CustomAlertDialog(
+                                    twoButtons: false,
+                                    context: ctx,
+                                    content: e.toString());
+                              });
+                        }
+                        setState(() {
+                          isLoading = false;
+                        });
+                          Navigator.of(context).pop();
+                      })
                 ],
               ),
-              onTap: () {
-                setState(() {
-                  isImportant = !isImportant;
-                });
-        
-              },
             ),
-            SizedBox(height: getProportionateScreenHeight(35)),
-            DefaultButton(
-                text: 'Add Note',
-                press: () {
-                  if (titleController.text.isEmpty &&
-                      descriptionContoreller.text.isEmpty) {
-                    return;
-                  }
-                  note.addNote(isImportant, titleController.text,
-                      descriptionContoreller.text);
-                  Navigator.of(context).pop();
-                  print(isImportant.toString());
-                })
-          ],
-        ),
-      ),
-    );
+          );
   }
 }
 
